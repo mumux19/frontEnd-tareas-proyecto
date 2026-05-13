@@ -63,26 +63,4 @@ Dado que el usuario ingresa un nombre de proyecto que ya existe, cuando envía e
 Dado que faltan campos obligatorios,cuando intenta enviar el formulario,entonces se muestran errores de validación en el frontend.
 
 
-PROMT UTILIZADOS
-
-1ro_ 
-Soy un desarrollador senior frontEnd con experiencia en Angular+17 y TypeScript , y con experiencia en aplicaciones web empresariales.
-Contexto: Estoy desarrollando el frontend de una aplicación de gestión de Tareas y Proyectos. El backend es una API REST en Java (Spring Boot). Actualmente estoy trabajando en la feature "Crear un Nuevo Proyecto". La regla principal es que no puedo modificar absolutamente nada del backend, el frontend debe adaptarse a lo que la API expone
-
-
-Restricciones técnicas:
-- Usar Angular standalone components
-- Reactive Forms
-- HttpClient
-- Crear ProjectService
-- Manejar errores HTTP (400, 409)
-- Mostrar estados de loading y éxito
-
-
-Generar:
-- componente de creación de proyecto
-- formulario HTML
-- servicio
-- validaciones
-
-
+PROMT UTILIZADOS 
