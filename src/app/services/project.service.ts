@@ -9,7 +9,7 @@ import { Project, ProjectCreateRequest } from '../models/project.model';
 })
 export class ProjectService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8080/projects';
+  private readonly apiUrl = 'http://localhost:3000/projects';
 
   createProject(project: ProjectCreateRequest): Observable<Project> {
     return this.http.post<Project>(this.apiUrl, project).pipe(
