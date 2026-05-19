@@ -48,7 +48,6 @@ Manejo de estados:
 -loading
 -error
 -éxito (feedback visual)
-Redirección al listado de proyectos luego de creación exitosa (si aplica).
 Manejo de errores HTTP (400, 409).
 
 
