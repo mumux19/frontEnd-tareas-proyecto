@@ -1,0 +1,11 @@
+- [x] Read `docs/crear-tarea/requirements.md` (content was provided in prompt)
+- [ ] Generate `docs/crear-tarea/tasks.md` with implementation checklist
+- [ ] Define TaskRequest and TaskResponse interfaces
+- [ ] Create TaskService
+- [ ] Create NewTaskComponent (standalone)
+- [ ] Implement Reactive Form in NewTaskComponent with validations
+- [ ] Integrate Bootstrap 5 for form styling and visual feedback
+- [ ] Implement loading, error, and success state handling in component
+- [ ] Handle HTTP errors (400, 404, 409) from TaskService
+- [ ] Update `src/app/app.routes.ts` with the new route `/proyectos/:id/nueva-tarea`
+- [ ] Display success message upon successful task creation (no redirection)

@@ -1,0 +1,75 @@
+<div class="container mt-4">
+  <h2>Create New Task for Project {{ projectId }}</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success" role="alert">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="title"
+        formControlName="title"
+        [class.is-invalid]="f['title'].invalid && (f['title'].dirty || f['title'].touched)"
+      />
+      <div *ngIf="f['title'].invalid && (f['title'].dirty || f['title'].touched)" class="invalid-feedback">
+        <div *ngIf="f['title'].errors?.['required']">(Title is required.)</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="estimateHours" class="form-label">Estimate Hours</label>
+      <input
+        type="number"
+        class="form-control"
+        id="estimateHours"
+        formControlName="estimateHours"
+        [class.is-invalid]="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)"
+      />
+      <div *ngIf="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)" class="invalid-feedback">
+        <div *ngIf="f['estimateHours'].errors?.['required']">(Estimate Hours is required.)</div>
+        <div *ngIf="f['estimateHours'].errors?.['min']">(Estimate Hours must be at least 1.)</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="assignee" class="form-label">Assignee</label>
+      <input
+        type="text"
+        class="form-control"
+        id="assignee"
+        formControlName="assignee"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select
+        class="form-select"
+        id="status"
+        formControlName="status"
+        [class.is-invalid]="f['status'].invalid && (f['status'].dirty || f['status'].touched)"
+      >
+        <option [ngValue]="null" disabled>Select Status</option>
+        <option value="TODO">TODO</option>
+        <option value="IN_PROGRESS">IN_PROGRESS</option>
+        <option value="DONE">DONE</option>
+      </select>
+      <div *ngIf="f['status'].invalid && (f['status'].dirty || f['status'].touched)" class="invalid-feedback">
+        <div *ngIf="f['status'].errors?.['required']">(Status is required.)</div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid || loading">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+      Create Task
+    </button>
+  </form>
+</div>
