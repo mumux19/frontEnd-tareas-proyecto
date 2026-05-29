@@ -1,11 +1,6 @@
-- [x] Read `docs/crear-tarea/requirements.md` (content was provided in prompt)
-- [ ] Generate `docs/crear-tarea/tasks.md` with implementation checklist
-- [ ] Define TaskRequest and TaskResponse interfaces
-- [ ] Create TaskService
-- [ ] Create NewTaskComponent (standalone)
-- [ ] Implement Reactive Form in NewTaskComponent with validations
-- [ ] Integrate Bootstrap 5 for form styling and visual feedback
-- [ ] Implement loading, error, and success state handling in component
-- [ ] Handle HTTP errors (400, 404, 409) from TaskService
-- [ ] Update `src/app/app.routes.ts` with the new route `/proyectos/:id/nueva-tarea`
-- [ ] Display success message upon successful task creation (no redirection)
+- [x] Documentación limpia y actualizada en Spec.md
+- [x] El formulario de nueva tarea usa un `<select>` para elegir el proyecto (obtenido con ProjectService y GET `/projects`)
+- [x] ProjectService obtiene proyectos reales del backend (sin mocks)
+- [x] TaskService crea la tarea usando POST `/projects/{projectId}/tasks`
+- [x] CrearTareaComponent carga proyectos en ngOnInit, muestra el dropdown y valida todos los campos
+- [x] Al guardar, muestra mensaje de éxito en pantalla (sin redirección)

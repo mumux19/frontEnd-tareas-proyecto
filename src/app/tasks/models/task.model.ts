@@ -1,4 +1,5 @@
 export interface TaskRequest {
+  project: { id: number };
   title: string;
   estimateHours: number;
   assignee: string;

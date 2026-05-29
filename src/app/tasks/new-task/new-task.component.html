@@ -1,5 +1,5 @@
 <div class="container mt-4">
-  <h2>Create New Task for Project {{ projectId }}</h2>
+  <h2>Create New Task</h2>
 
   <div *ngIf="successMessage" class="alert alert-success" role="alert">
     {{ successMessage }}
@@ -9,7 +9,17 @@
     {{ errorMessage }}
   </div>
 
-  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+  <div class="mb-3">
+    <label for="projectId" class="form-label">Proyecto</label>
+    <select id="projectId" class="form-select" formControlName="projectId" [ngClass]="{'is-invalid': f['projectId'].touched && f['projectId'].invalid}">
+      <option value="" disabled selected>Seleccione un proyecto</option>
+      <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+    </select>
+    <div *ngIf="f['projectId'].touched && f['projectId'].invalid" class="invalid-feedback">
+      El proyecto es obligatorio.
+    </div>
+  </div>
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
       <input

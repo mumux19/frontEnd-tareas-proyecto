@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { TaskService } from '../task.service';
 import { TaskRequest } from '../models/task.model';
 import { HttpClientModule } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ProjectService } from '../../services/project.service';
+import { Project } from '../../models/project.model';
 
 @Component({
   selector: 'app-new-task',
@@ -21,31 +22,39 @@ import { of } from 'rxjs';
 })
 export class NewTaskComponent implements OnInit {
   taskForm!: FormGroup;
-  projectId!: number;
+  projects: Project[] = [];
   loading = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private projectService: ProjectService
   ) { }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.projectId = Number(params.get('id'));
-    });
-
     this.taskForm = this.fb.group({
+      projectId: [null, Validators.required],
       title: ['', Validators.required],
       estimateHours: [null, [Validators.required, Validators.min(1)]],
       assignee: [''],
-      status: [null, Validators.required] // Default status, should be selectable
+      status: [null, Validators.required]
     });
+    this.loadProjects();
   }
 
+  private loadProjects(): void {
+    this.projectService.getProjects().subscribe({
+      next: (projects) => {
+        this.projects = projects;
+      },
+      error: (error) => {
+        console.error('Error loading projects:', error);
+        this.errorMessage = 'Failed to load projects.';
+      }
+    });
+  }
   onSubmit(): void {
     this.loading = true;
     this.successMessage = null;
@@ -57,34 +66,38 @@ export class NewTaskComponent implements OnInit {
       return;
     }
 
-    const taskRequest: TaskRequest = this.taskForm.value;
+    const formValues = this.taskForm.value;
+    const projectId = formValues.projectId;
 
-    this.taskService.createTask(this.projectId, taskRequest).pipe(
+    // Ahora metemos TODOS los datos juntos en el mismo objeto (incluyendo el projectId)
+    const taskRequest: TaskRequest = {
+     project: { id: Number(formValues.projectId) }, // ¡El ID viaja en el body!
+      title: formValues.title,
+      estimateHours: formValues.estimateHours,
+      assignee: formValues.assignee,
+      status: formValues.status
+    };
+
+    this.taskService.createTask(taskRequest).pipe(
       catchError(error => {
         console.error('Error creating task:', error);
-        this.loading = false;
+        this.loading = false; // Esto apaga el botón que gira
+        
+        // Atrapamos los errores para mostrar el mensaje
         if (error.status === 400) {
-          this.errorMessage = 'Invalid data provided. Please check your inputs.';
-        } else if (error.status === 404) {
-          this.errorMessage = 'Project not found. The project ID might be incorrect.';
-        } else if (error.status === 409) {
-          this.errorMessage = 'Cannot add task to a closed project.';
+          this.errorMessage = 'Datos inválidos. Por favor revisa el formulario.';
+        } else if (error.status === 405) {
+          this.errorMessage = 'Error de ruta en el servidor (405).';
         } else {
-          this.errorMessage = 'An unexpected error occurred. Please try again.';
+          this.errorMessage = 'Ocurrió un error inesperado.';
         }
         return of(null);
       })
     ).subscribe(response => {
-      this.loading = false;
+      this.loading = false; // Apaga el botón si todo sale bien
       if (response) {
-        this.successMessage = 'Task created successfully!';
-        // As per requirements, no redirection, just show success message.
-        this.taskForm.reset({
-          title: '',
-          estimateHours: null,
-          assignee: '',
-          status: null
-        });
+        this.successMessage = '¡Tarea creada con éxito!';
+        this.taskForm.reset();
       }
     });
   }

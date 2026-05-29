@@ -13,7 +13,8 @@ export class TaskService {
 
   constructor(private http: HttpClient) { }
 
-  createTask(projectId: number, task: TaskRequest): Observable<TaskResponse> {
-    return this.http.post<TaskResponse>(`${this.apiUrl}/projects/${projectId}/tasks`, task);
+  createTask(task: TaskRequest): Observable<TaskResponse> {
+    // IMPORTANTE: Fijate si tu backend es /task o /tasks y cambialo acá si hace falta
+    return this.http.post<TaskResponse>(`${this.apiUrl}/tasks`, task); 
   }
 }

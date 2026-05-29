@@ -23,6 +23,14 @@
       "endDate": "2026-05-26",
       "status": "ACTIVE",
       "description": "asdasd"
+    },
+    {
+      "id": "j4PBa-A6CZ8",
+      "name": "asfsd",
+      "startDate": "2026-05-29",
+      "endDate": "2026-06-01",
+      "status": "PLANNED",
+      "description": ""
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
