@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "mock-api": "json-server --watch db.json --port 3000",
     "serve:ssr:frontEnd-tareas-proyectos": "node dist/frontEnd-tareas-proyectos/server/server.mjs"
   },
   "private": true,
@@ -32,6 +33,7 @@
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
     "jsdom": "^28.0.0",
+    "json-server": "^1.0.0-beta.15",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

@@ -1,0 +1,6 @@
+- [x] Documentación limpia y actualizada en Spec.md
+- [x] El formulario de nueva tarea usa un `<select>` para elegir el proyecto (obtenido con ProjectService y GET `/projects`)
+- [x] ProjectService obtiene proyectos reales del backend (sin mocks)
+- [x] TaskService crea la tarea usando POST `/projects/{projectId}/tasks`
+- [x] CrearTareaComponent carga proyectos en ngOnInit, muestra el dropdown y valida todos los campos
+- [x] Al guardar, muestra mensaje de éxito en pantalla (sin redirección)

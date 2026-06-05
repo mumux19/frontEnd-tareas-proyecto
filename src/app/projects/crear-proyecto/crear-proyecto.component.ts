@@ -91,7 +91,7 @@ export class CrearProyectoComponent implements OnInit {
     this.projectService.createProject(payload).subscribe({
       next: () => {
         this.isSaving.set(false);
-        this.successMessage.set('¡Proyecto creado exitosamente! Redirigiendo...');
+        this.successMessage.set('¡Proyecto creado exitosamente!');
         setTimeout(() => this.router.navigate(['/projects']), 2000);
       },
       error: (err: HttpErrorResponse) => {
