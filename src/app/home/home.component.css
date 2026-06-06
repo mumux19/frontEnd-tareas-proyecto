@@ -1,0 +1,96 @@
+/* Limitar el ancho para que se lea como un documento (opcional) */
+.max-width-notion {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* --- TABS --- */
+.notion-tabs .nav-link {
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.1s ease-in-out;
+  cursor: pointer;
+}
+
+.notion-tabs .nav-link:hover {
+  background-color: #efefef;
+}
+
+.notion-tabs .active-tab {
+  color: #0f172a !important;
+  background-color: #efefef;
+  /* El gris de Notion para el tab activo */
+}
+
+/* --- BOTÓN AZUL --- */
+.bg-notion-blue {
+  background-color: #2eaadc !important;
+  /* Azul exacto de Notion */
+  color: white;
+  font-weight: 500;
+}
+
+.bg-notion-blue:hover {
+  background-color: #0087c9 !important;
+}
+
+/* --- TABLA Y FILAS --- */
+.notion-table-header {
+  font-size: 0.85rem;
+}
+
+.notion-row {
+  transition: background-color 0.15s ease;
+  min-height: 44px;
+  /* Altura cómoda para cliquear */
+}
+
+/* Hover súper sutil al pasar el mouse por la fila */
+.notion-row:hover {
+  background-color: #f7f7f5;
+  cursor: pointer;
+}
+
+.notion-row:last-child {
+  border-bottom: none !important;
+}
+
+.notion-dots {
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.notion-row:hover .notion-dots {
+  visibility: visible;
+  /* Aparecen los 3 puntitos solo al hacer hover */
+}
+
+/* --- BADGES (Etiquetas de colores pastel) --- */
+.notion-badge-todo {
+  background-color: #e3e2e0;
+  /* Gris pastel */
+  color: #32302c;
+}
+
+.notion-badge-inprogress {
+  background-color: #d3e5ef;
+  /* Azul pastel */
+  color: #183347;
+}
+
+.notion-badge-done {
+  background-color: #dbeddb;
+  /* Verde pastel */
+  color: #1c3829;
+}
+
+/* Checkbox más suave */
+.notion-checkbox {
+  border-color: #d1d1d1;
+  cursor: pointer;
+}
+
+.notion-checkbox:focus {
+  box-shadow: none;
+}

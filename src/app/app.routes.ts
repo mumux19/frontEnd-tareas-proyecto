@@ -3,8 +3,9 @@ import { CrearProyectoComponent } from './projects/crear-proyecto/crear-proyecto
 import { NewTaskComponent } from './tasks/new-task/new-task.component';
 
 export const routes: Routes = [
+  { path: 'home', loadComponent: () => import('./home/home.component').then(m => m.HomeComponent) },
   { path: 'projects/crear', component: CrearProyectoComponent },
   { path: 'nueva-tarea', component: NewTaskComponent },
-  { path: '', redirectTo: 'projects/crear', pathMatch: 'full' }, // Redirigir a crear proyecto por defecto
-  { path: '**', redirectTo: 'projects/crear' } // Manejo de rutas no encontradas
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home' }
 ];

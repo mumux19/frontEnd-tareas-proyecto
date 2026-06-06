@@ -6,8 +6,8 @@ import { TaskRequest } from '../models/task.model';
 import { HttpClientModule } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { ProjectService } from '../../services/project.service';
-import { Project } from '../../models/project.model';
+import { ProjectService } from '../../projects/services/project.service';
+import { Project } from '../../projects/models/project.model';
 
 @Component({
   selector: 'app-new-task',
@@ -71,7 +71,7 @@ export class NewTaskComponent implements OnInit {
 
     // Ahora metemos TODOS los datos juntos en el mismo objeto (incluyendo el projectId)
     const taskRequest: TaskRequest = {
-     project: { id: Number(formValues.projectId) }, // ¡El ID viaja en el body!
+      project: { id: Number(formValues.projectId) }, // ¡El ID viaja en el body!
       title: formValues.title,
       estimateHours: formValues.estimateHours,
       assignee: formValues.assignee,
@@ -82,7 +82,7 @@ export class NewTaskComponent implements OnInit {
       catchError(error => {
         console.error('Error creating task:', error);
         this.loading = false; // Esto apaga el botón que gira
-        
+
         // Atrapamos los errores para mostrar el mensaje
         if (error.status === 400) {
           this.errorMessage = 'Datos inválidos. Por favor revisa el formulario.';

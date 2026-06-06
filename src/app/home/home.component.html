@@ -1,0 +1,140 @@
+<div class="container-fluid px-4 py-3 max-width-notion">
+
+  <div class="mb-4">
+    <h1 class="fw-bold text-dark display-6 mb-2">
+      <span class="me-2">📚</span>Planificador general
+    </h1>
+    <p class="text-muted small">
+      Utiliza esta vista para hacer un seguimiento de todos tus proyectos y tareas.
+      Haz clic en el botón azul para añadir elementos nuevos al sistema.
+    </p>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+
+    <ul class="nav gap-3 notion-tabs">
+      <li class="nav-item">
+        <button class="nav-link px-2 py-1 rounded-2" [class.active-tab]="activeTab() === 'projects'"
+          (click)="activeTab.set('projects')">
+          <span class="me-1">📑</span> Proyectos
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link px-2 py-1 rounded-2" [class.active-tab]="activeTab() === 'tasks'"
+          (click)="activeTab.set('tasks')">
+          <span class="me-1">✅</span> Tareas
+        </button>
+      </li>
+    </ul>
+
+    @if (activeTab() === 'projects') {
+    <button class="btn btn-primary btn-sm px-3 shadow-sm rounded-2 bg-notion-blue border-0"
+      routerLink="/projects/crear">
+      Nuevo Proyecto <span class="ms-1">▾</span>
+    </button>
+    } @else {
+    <button class="btn btn-primary btn-sm px-3 shadow-sm rounded-2 bg-notion-blue border-0" routerLink="/nueva-tarea">
+      Nueva Tarea <span class="ms-1">▾</span>
+    </button>
+    }
+  </div>
+  <div class="w-100">
+
+    @if (activeTab() === 'projects') {
+
+    <div class="d-flex text-muted small pb-2 border-bottom notion-table-header px-2">
+      <div style="width: 160px;"><span class="me-1">❇️</span> Estado</div>
+      <div class="flex-grow-1"><span class="me-1"></span> Nombre del Proyecto</div>
+      <div style="width: 180px;"><span class="me-1">📅</span> Fecha límite</div>
+      <div style="width: 50px;"></div>
+    </div>
+
+    <div class="d-flex flex-column">
+      @for (project of projects(); track project.id) {
+      <div class="d-flex align-items-center border-bottom py-2 px-2 notion-row">
+
+        <div style="width: 160px;">
+          <span class="badge rounded-pill fw-normal px-2 py-1" [ngClass]="getNotionBadge(project.status)">
+            {{ translateStatus(project.status) }}
+          </span>
+        </div>
+
+        <div class="flex-grow-1 fw-medium text-dark d-flex align-items-center">
+          <span class="text-muted me-2 small">▶</span>
+          {{ project.name }}
+        </div>
+
+        <div style="width: 180px;" class="text-muted small">
+          {{ project.endDate }}
+        </div>
+
+        <div style="width: 50px;" class="text-end text-muted">
+          <span class="notion-dots">•••</span>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    @if (activeTab() === 'tasks') {
+
+    <div class="d-flex text-muted small pb-2 border-bottom notion-table-header px-2">
+      <div style="width: 160px;"><span class="me-1">❇️</span> Estado</div>
+      <div class="flex-grow-1"><span class="me-1"></span> Nombre de la Tarea</div>
+
+      <div style="width: 180px;"><span class="me-1">📁</span> Proyecto</div>
+
+      <div style="width: 120px;"><span class="me-1">⏱️</span> Estimación</div>
+      <div style="width: 180px;"><span class="me-1">👤</span> Asignado a</div>
+      <div style="width: 50px;"></div>
+    </div>
+
+    <div class="d-flex flex-column">
+      @for (task of tasks(); track task.id) {
+      <div class="d-flex align-items-center border-bottom py-2 px-2 notion-row">
+
+        <div style="width: 160px;">
+          <span class="badge rounded-pill fw-normal px-2 py-1" [ngClass]="getNotionBadge(task.status)">
+            {{ translateStatus(task.status) }}
+          </span>
+        </div>
+
+        <div class="flex-grow-1 fw-medium text-dark d-flex align-items-center">
+          <input class="form-check-input mt-0 me-3 notion-checkbox" type="checkbox" [checked]="task.status === 'DONE'">
+          <span [class.text-decoration-line-through]="task.status === 'DONE'">
+            {{ task.title }}
+          </span>
+        </div>
+
+        <div style="width: 180px;" class="text-muted small">
+          <span class="badge bg-light text-secondary border border-secondary-subtle fw-normal text-truncate"
+            style="max-width: 160px;">
+            {{ getProjectName(task.project?.id) }}
+          </span>
+        </div>
+
+
+        <div style="width: 120px;" class="text-muted small">
+          {{ task.estimateHours }}h
+        </div>
+
+        <div style="width: 180px;" class="text-muted small d-flex align-items-center gap-2">
+          <div
+            class="bg-secondary bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center fw-bold text-secondary"
+            style="width: 22px; height: 22px; font-size: 9px;">
+            {{ task.assignee.charAt(0) | uppercase }}
+          </div>
+          {{ task.assignee }}
+        </div>
+
+        <div style="width: 50px;" class="text-end text-muted">
+          <span class="notion-dots">•••</span>
+        </div>
+      </div>
+      } @empty {
+      <div class="text-muted small py-4 text-center">No hay tareas creadas.</div>
+      }
+    </div>
+    }
+
+  </div>

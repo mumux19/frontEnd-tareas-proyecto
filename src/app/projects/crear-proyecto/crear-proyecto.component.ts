@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ProjectService } from '../../services/project.service';
-import { ProjectCreateRequest, ProjectStatus } from '../../models/project.model';
+import { ProjectService } from '../services/project.service';
+import { ProjectCreateRequest, ProjectStatus } from '../models/project.model';
 
 /** Cross-field validator: endDate >= startDate */
 function endDateAfterStartDate(group: AbstractControl): ValidationErrors | null {
@@ -66,7 +66,7 @@ export class CrearProyectoComponent implements OnInit {
   /** Indica si el endDate tiene error cruzado (endDate < startDate) */
   get hasEndBeforeStartError(): boolean {
     return this.form.hasError('endBeforeStart') &&
-           (this.endDateCtrl.dirty || this.endDateCtrl.touched);
+      (this.endDateCtrl.dirty || this.endDateCtrl.touched);
   }
 
   onSubmit(): void {

@@ -17,4 +17,8 @@ export class TaskService {
     // IMPORTANTE: Fijate si tu backend es /task o /tasks y cambialo acá si hace falta
     return this.http.post<TaskResponse>(`${this.apiUrl}/tasks`, task); 
   }
+
+  getTasks(): Observable<TaskResponse[]> {
+    return this.http.get<TaskResponse[]>(`${this.apiUrl}/tasks`);
+  }
 }
