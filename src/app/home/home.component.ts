@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TaskResponse } from '../tasks/models/task.model'; // Tu modelo real
-// Importá el modelo de tu proyecto (puede que se llame Project o ProjectResponse)
+import { TaskResponse } from '../tasks/models/task.model';
 import { TaskService } from '../tasks/task.service';
 import { ProjectService } from '../projects/services/project.service';
 import { Project } from '../projects/models/project.model';
+
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -15,51 +16,40 @@ import { Project } from '../projects/models/project.model';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  // 1. Inicializamos las Signals completamente vacías
   tasks = signal<TaskResponse[]>([]);
   projects = signal<Project[]>([]);
 
   loading = signal<boolean>(true);
+  error = signal<string | null>(null);
   activeTab = signal<'projects' | 'tasks'>('projects');
 
-  // 2. Inyectamos los DOS servicios
+
   constructor(
     private taskService: TaskService,
     private projectService: ProjectService
   ) { }
 
-  // 3. Cuando el componente se carga, disparamos las peticiones a la BD
   ngOnInit(): void {
-    this.loadProjects();
-    this.loadTasks();
-  }
+    this.loading.set(true);
 
-  loadProjects(): void {
-    // Asegurate de que el método en tu servicio se llame así (o cambialo por el tuyo)
-    this.projectService.getProjects().subscribe({
-      next: (data) => {
-        console.log("Estas son mi tareas:", data);
-        this.projects.set(data); // Llenamos la Signal con los datos reales!
-      },
-      error: (err) => {
-        console.error('Error al traer proyectos del backend:', err);
-      }
-    });
-  }
-
-  loadTasks(): void {
-    // Asegurate de que el método en tu servicio se llame así
-    this.taskService.getTasks().subscribe({
-      next: (data) => {
-        this.tasks.set(data); // Llenamos la Signal con las tareas reales!
+    forkJoin({
+      projects: this.projectService.getProjects(),
+      tasks: this.taskService.getTasks()
+    }).subscribe({
+      next: ({ projects, tasks }) => {
+        this.projects.set(projects);
+        this.tasks.set(tasks);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Error al traer tareas del backend:', err);
+      error: () => {
+        this.error.set('No se pudo conectar al servidor. Intentá de nuevo.');
         this.loading.set(false);
       }
     });
+
   }
+
+
 
   // Busca el ID del proyecto en nuestra lista y devuelve el nombre
   getProjectName(idProyecto: number | undefined): string {
@@ -71,15 +61,14 @@ export class HomeComponent implements OnInit {
     return proyectoEncontrado ? proyectoEncontrado.name : 'Proyecto Desconocido';
   }
 
-  // --- MÉTODOS DE ESTILOS (Los dejamos igual) ---
   getNotionBadge(status: string): string {
     switch (status) {
       case 'TODO': return 'notion-badge-todo';
       case 'IN_PROGRESS': return 'notion-badge-inprogress';
       case 'DONE': return 'notion-badge-done';
-      case 'ACTIVE': return 'notion-badge-inprogress'; // Por si los proyectos usan ACTIVE
-      case 'PLANNED': return 'notion-badge-todo';      // Por si los proyectos usan PLANNED
-      case 'CLOSED': return 'notion-badge-done';       // Por si los proyectos usan CLOSED
+      case 'ACTIVE': return 'notion-badge-inprogress';
+      case 'PLANNED': return 'notion-badge-todo';
+      case 'CLOSED': return 'notion-badge-done';
       default: return 'badge bg-light text-dark';
     }
   }

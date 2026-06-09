@@ -12,5 +12,5 @@ export interface TaskResponse {
   estimateHours: number;
   assignee: string;
   status: 'TODO' | 'IN_PROGRESS' | 'DONE';
-  project?: { id: number };
+  project: { id: number };
 }
