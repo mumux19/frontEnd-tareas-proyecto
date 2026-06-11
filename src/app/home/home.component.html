@@ -1,149 +1,321 @@
-<div class="container-fluid px-4 py-3 max-width-notion">
+<div class="dashboard-wrapper animate-slide-up">
 
-  <div class="mb-4">
-    <h1 class="fw-bold text-dark display-6 mb-2">
-      <span class="me-2">📚</span>Planificador general
-    </h1>
-    <p class="text-muted small">
-      Utiliza esta vista para hacer un seguimiento de todos tus proyectos y tareas.
-      Haz clic en el botón azul para añadir elementos nuevos al sistema.
-    </p>
+  <!-- Header / Greeting Section -->
+  <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+    <div>
+      <h1 class="dashboard-title d-flex align-items-center gap-2">
+        <span>🚀</span> Planificador General
+      </h1>
+      <p class="dashboard-subtitle">
+        Gestiona y planifica tus proyectos y tareas del sistema de forma ágil y visual.
+      </p>
+    </div>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+  <!-- Demo Mode Banner -->
+  @if (isDemoMode()) {
+  <div class="demo-banner d-flex align-items-center justify-content-between p-3 mb-4 rounded-3 border">
+    <div class="d-flex align-items-center gap-3">
+      <div class="demo-icon-wrapper">
+        <i class="bi bi-info-circle-fill"></i>
+      </div>
+      <div>
+        <h6 class="demo-banner-title m-0">Conectado en Modo Demo (Datos Simulados)</h6>
+        <p class="demo-banner-desc m-0">
+          El servidor de la API (puerto 8080) no está disponible. Mostrando datos de prueba locales para interactuar con
+          la interfaz.
+        </p>
+      </div>
+    </div>
+    <button class="btn btn-outline-primary btn-sm px-3 rounded-2 d-flex align-items-center gap-1" (click)="loadData()">
+      <i class="bi bi-arrow-clockwise"></i>
+      <span>Reintentar Conexión</span>
+    </button>
+  </div>
+  }
 
-    <ul class="nav gap-3 notion-tabs">
+  <!-- Stats Grid -->
+  <div class="row g-3 mb-4">
+    <!-- Stat 1: Total Projects -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card p-3 rounded-3 d-flex align-items-center gap-3">
+        <div class="stat-icon-wrapper bg-indigo-soft text-primary">
+          <i class="bi bi-folder-fill"></i>
+        </div>
+        <div class="text-truncate">
+          <span class="stat-label">Proyectos Registrados</span>
+          <h3 class="stat-value m-0">{{ totalProjects() }}</h3>
+          <span class="stat-subtext text-primary">{{ activeProjectsCount() }} Activos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 2: Pending Tasks -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card p-3 rounded-3 d-flex align-items-center gap-3">
+        <div class="stat-icon-wrapper bg-amber-soft text-amber">
+          <i class="bi bi-clock-history"></i>
+        </div>
+        <div class="text-truncate">
+          <span class="stat-label">Tareas Pendientes</span>
+          <h3 class="stat-value m-0">{{ pendingTasksCount() }}</h3>
+          <span class="stat-subtext text-amber">Por hacer / En curso</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 3: Estimated Hours -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card p-3 rounded-3 d-flex align-items-center gap-3">
+        <div class="stat-icon-wrapper bg-rose-soft text-rose">
+          <i class="bi bi-stopwatch-fill"></i>
+        </div>
+        <div class="text-truncate">
+          <span class="stat-label">Tiempo Estimado</span>
+          <h3 class="stat-value m-0">{{ totalHours() }}h</h3>
+          <span class="stat-subtext text-rose">Total acumulado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat 4: Completion rate -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="stat-card p-3 rounded-3 d-flex align-items-center gap-3">
+        <div class="stat-icon-wrapper bg-emerald-soft text-emerald">
+          <i class="bi bi-check2-circle"></i>
+        </div>
+        <div class="w-100 text-truncate">
+          <span class="stat-label">Tasa de Cierre</span>
+          <h3 class="stat-value m-0">{{ completionProgress() }}%</h3>
+          <div class="progress mt-1" style="height: 6px; border-radius: 3px;">
+            <div class="progress-bar bg-emerald" role="progressbar" [style.width.%]="completionProgress()"
+              aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Control Bar -->
+  <div
+    class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3 pb-3 border-bottom mb-4">
+    <!-- Tabs -->
+    <ul class="nav gap-2 dashboard-tabs">
       <li class="nav-item">
-        <button class="nav-link px-2 py-1 rounded-2" [class.active-tab]="activeTab() === 'projects'"
-          (click)="activeTab.set('projects')">
-          <span class="me-1">📑</span> Proyectos
+        <button class="tab-button d-flex align-items-center gap-2 px-3 py-2 rounded-3 border-0"
+          [class.active-tab]="activeTab() === 'projects'" (click)="activeTab.set('projects')">
+          <i class="bi bi-collection-fill"></i>
+          <span>Proyectos</span>
         </button>
       </li>
       <li class="nav-item">
-        <button class="nav-link px-2 py-1 rounded-2" [class.active-tab]="activeTab() === 'tasks'"
-          (click)="activeTab.set('tasks')">
-          <span class="me-1">✅</span> Tareas
+        <button class="tab-button d-flex align-items-center gap-2 px-3 py-2 rounded-3 border-0"
+          [class.active-tab]="activeTab() === 'tasks'" (click)="activeTab.set('tasks')">
+          <i class="bi bi-check2-square"></i>
+          <span>Tareas</span>
         </button>
       </li>
     </ul>
 
+    <!-- Action Button depending on current tab -->
     @if (activeTab() === 'projects') {
-    <button class="btn btn-primary btn-sm px-3 shadow-sm rounded-2 bg-notion-blue border-0"
+    <button
+      class="btn btn-primary px-3 py-2 rounded-3 d-flex align-items-center gap-2 border-0 btn-indigo-gradient shadow-sm"
       routerLink="/projects/crear">
-      Nuevo Proyecto <span class="ms-1">▾</span>
+      <i class="bi bi-plus-lg"></i>
+      <span>Nuevo Proyecto</span>
     </button>
     } @else {
-    <button class="btn btn-primary btn-sm px-3 shadow-sm rounded-2 bg-notion-blue border-0" routerLink="/nueva-tarea">
-      Nueva Tarea <span class="ms-1">▾</span>
+    <button
+      class="btn btn-primary px-3 py-2 rounded-3 d-flex align-items-center gap-2 border-0 btn-indigo-gradient shadow-sm"
+      routerLink="/nueva-tarea">
+      <i class="bi bi-plus-lg"></i>
+      <span>Nueva Tarea</span>
     </button>
     }
   </div>
+
+  <!-- Main Lists Content -->
   <div class="w-100">
 
-    @if (error()) {
-    <div class="alert alert-danger mt-3 shadow-sm border-0" role="alert">
-      ⚠️ {{ error() }}
+    <!-- Error Banner (Only displayed if not in Demo Mode fallback) -->
+    @if (error() && !isDemoMode()) {
+    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center gap-3 p-3" role="alert">
+      <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+      <div>
+        <h6 class="alert-heading m-0 fw-semibold">Error al cargar datos</h6>
+        <p class="m-0 small">{{ error() }}</p>
+      </div>
     </div>
     }
 
+    <!-- Loading Spinner -->
     @if (loading()) {
-    <div class="d-flex justify-content-center align-items-center py-5 text-muted">
-      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-      <span>Cargando tablero...</span>
+    <div
+      class="d-flex flex-column justify-content-center align-items-center py-5 text-muted gap-3 bg-white rounded-3 shadow-sm border border-light-subtle">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <span class="fw-medium text-secondary">Cargando panel de control...</span>
     </div>
     }
-    @else if (!error()) {
+    @else if (!error() || isDemoMode()) {
 
+    <!-- PROJECTS TAB -->
     @if (activeTab() === 'projects') {
-    <div class="d-flex text-muted small pb-2 border-bottom notion-table-header px-2">
-      <div style="width: 160px;"><span class="me-1">❇️</span> Estado</div>
-      <div class="flex-grow-1"><span class="me-1"></span> Nombre del Proyecto</div>
-      <div style="width: 180px;"><span class="me-1">📅</span> Fecha límite</div>
-      <div style="width: 50px;"></div>
+
+    <!-- Table header row -->
+    <div class="d-flex text-muted small pb-2 px-3 border-bottom list-header-row font-secondary fw-semibold">
+      <div style="width: 140px;"><i class="bi bi-tag-fill me-1.5"></i> Estado</div>
+      <div class="flex-grow-1"><i class="bi bi-file-earmark-text me-1.5"></i> Nombre del Proyecto</div>
+      <div style="width: 180px;"><i class="bi bi-calendar-check me-1.5"></i> Fecha Límite</div>
+      <div style="width: 50px;" class="text-end"></div>
     </div>
 
-    <div class="d-flex flex-column">
+    <!-- Projects Rows List -->
+    <div class="d-flex flex-column gap-2 mt-2">
       @for (project of projects(); track project.id) {
-      <div class="d-flex align-items-center border-bottom py-2 px-2 notion-row">
-        <div style="width: 160px;">
-          <span class="badge rounded-pill fw-normal px-2 py-1" [ngClass]="getNotionBadge(project.status)">
-            {{ translateStatus(project.status) }}
-          </span>
+      <div
+        class="d-flex align-items-center bg-white border border-light-subtle py-3 px-3 rounded-3 shadow-sm list-row-card">
+
+        <!-- Status Badge Dropdown -->
+        <div style="width: 140px; position: relative;">
+          <select 
+            class="badge rounded-pill fw-medium status-badge-pill border-0" 
+            [ngClass]="getNotionBadge(project.status)" 
+            style="appearance: none; padding-right: 1.8rem; cursor: pointer; width: 100%; outline: none;"
+            (change)="onUpdateProjectStatus(project, $event)">
+            <option value="PLANNED" [selected]="project.status === 'PLANNED'">Planificado</option>
+            <option value="ACTIVE" [selected]="project.status === 'ACTIVE'">Activo</option>
+            <option value="CLOSED" [selected]="project.status === 'CLOSED'">Cerrado</option>
+          </select>
+          <i class="bi bi-chevron-down position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;" [ngClass]="getNotionBadge(project.status)"></i>
         </div>
-        <div class="flex-grow-1 fw-medium text-dark d-flex align-items-center">
-          <span class="text-muted me-2 small">▶</span>
+
+        <!-- Project Title -->
+        <div class="flex-grow-1 fw-bold text-slate-800 d-flex align-items-center">
+          <span class="row-icon-bullet me-2.5">📁</span>
           {{ project.name }}
         </div>
-        <div style="width: 180px;" class="text-muted small">
+
+        <!-- End Date -->
+        <div style="width: 180px;" class="text-secondary small fw-medium">
+          <i class="bi bi-calendar-event text-muted me-1.5"></i>
           {{ project.endDate }}
         </div>
-        <div style="width: 50px;" class="text-end text-muted">
-          <span class="notion-dots">•••</span>
+
+        <!-- Delete Icon -->
+        <div style="width: 50px;" class="text-end">
+          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle" (click)="onDeleteProject(project.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+
+      </div>
+      } @empty {
+      <!-- Empty State projects -->
+      <div
+        class="d-flex flex-column justify-content-center align-items-center py-5 gap-3 bg-white rounded-3 border border-light-subtle shadow-sm">
+        <div class="fs-1 text-muted"><i class="bi bi-folder-x"></i></div>
+        <div class="text-center">
+          <h6 class="m-0 fw-bold text-slate-700">No hay proyectos registrados</h6>
+          <p class="text-muted small m-0">Comienza creando un proyecto en el botón superior azul.</p>
         </div>
       </div>
       }
     </div>
     }
 
+    <!-- TASKS TAB -->
     @if (activeTab() === 'tasks') {
 
-    <div class="d-flex text-muted small pb-2 border-bottom notion-table-header px-2">
-      <div style="width: 160px;"><span class="me-1">❇️</span> Estado</div>
-      <div class="flex-grow-1"><span class="me-1"></span> Nombre de la Tarea</div>
-
-      <div style="width: 180px;"><span class="me-1">📁</span> Proyecto</div>
-
-      <div style="width: 120px;"><span class="me-1">⏱️</span> Estimación</div>
-      <div style="width: 180px;"><span class="me-1">👤</span> Asignado a</div>
-      <div style="width: 50px;"></div>
+    <!-- Table header row -->
+    <div class="d-flex text-muted small pb-2 px-3 border-bottom list-header-row font-secondary fw-semibold">
+      <div style="width: 140px;"><i class="bi bi-tag-fill me-1.5"></i> Estado</div>
+      <div class="flex-grow-1"><i class="bi bi-card-checklist me-1.5"></i> Nombre de la Tarea</div>
+      <div style="width: 180px;"><i class="bi bi-folder-symlink me-1.5"></i> Proyecto</div>
+      <div style="width: 120px;"><i class="bi bi-hourglass-split me-1.5"></i> Estimación</div>
+      <div style="width: 180px;"><i class="bi bi-person me-1.5"></i> Responsable</div>
+      <div style="width: 50px;" class="text-end"></div>
     </div>
 
-    <div class="d-flex flex-column">
+    <!-- Tasks Rows List -->
+    <div class="d-flex flex-column gap-2 mt-2">
       @for (task of tasks(); track task.id) {
-      <div class="d-flex align-items-center border-bottom py-2 px-2 notion-row">
+      <div
+        class="d-flex align-items-center bg-white border border-light-subtle py-3 px-3 rounded-3 shadow-sm list-row-card"
+        [class.completed-task-card]="task.status === 'DONE'">
 
-        <div style="width: 160px;">
-          <span class="badge rounded-pill fw-normal px-2 py-1" [ngClass]="getNotionBadge(task.status)">
-            {{ translateStatus(task.status) }}
-          </span>
+        <!-- Status Badge Dropdown -->
+        <div style="width: 140px; position: relative;">
+          <select 
+            class="badge rounded-pill fw-medium status-badge-pill border-0" 
+            [ngClass]="getNotionBadge(task.status)" 
+            style="appearance: none; padding-right: 1.8rem; cursor: pointer; width: 100%; outline: none;"
+            (change)="onUpdateTaskStatus(task, $event)">
+            <option value="TODO" [selected]="task.status === 'TODO'">Por hacer</option>
+            <option value="IN_PROGRESS" [selected]="task.status === 'IN_PROGRESS'">En progreso</option>
+            <option value="DONE" [selected]="task.status === 'DONE'">Terminado</option>
+          </select>
+          <i class="bi bi-chevron-down position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;" [ngClass]="getNotionBadge(task.status)"></i>
         </div>
 
-        <div class="flex-grow-1 fw-medium text-dark d-flex align-items-center">
-          <input class="form-check-input mt-0 me-3 notion-checkbox" type="checkbox" [checked]="task.status === 'DONE'">
-          <span [class.text-decoration-line-through]="task.status === 'DONE'">
+        <!-- Task Checkbox & Title -->
+        <div class="flex-grow-1 fw-bold text-slate-800 d-flex align-items-center">
+          <div class="checkbox-wrapper me-3">
+            <input class="form-check-input custom-checkbox" type="checkbox" [checked]="task.status === 'DONE'" (change)="onToggleTaskCheckbox(task, $event)">
+          </div>
+          <span class="task-title-text" [class.text-decoration-line-through]="task.status === 'DONE'"
+            [class.text-muted]="task.status === 'DONE'">
             {{ task.title }}
           </span>
         </div>
 
-        <div style="width: 180px;" class="text-muted small">
-          <span class="badge bg-light text-secondary border border-secondary-subtle fw-normal text-truncate"
-            style="max-width: 160px;">
-            {{ getProjectName(task.project?.id) }}
+        <!-- Associated Project -->
+        <div style="width: 180px;" class="text-secondary small fw-medium">
+          <span class="project-pill-tag">
+            <i class="bi bi-folder2 text-secondary me-1.5"></i>
+            {{ getProjectName(task.project.id) }}
           </span>
         </div>
 
-
-        <div style="width: 120px;" class="text-muted small">
-          {{ task.estimateHours }}h
+        <!-- Estimate Hours -->
+        <div style="width: 120px;" class="text-secondary small fw-bold">
+          <span class="hours-badge px-2.5 py-1 rounded-2">
+            {{ task.estimateHours }}h
+          </span>
         </div>
 
-        <div style="width: 180px;" class="text-muted small d-flex align-items-center gap-2">
-          <div
-            class="bg-secondary bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center fw-bold text-secondary"
-            style="width: 22px; height: 22px; font-size: 9px;">
+        <!-- Assignee with initial avatar -->
+        <div style="width: 180px;" class="text-secondary small d-flex align-items-center gap-2.5">
+          <div class="avatar-circle text-white fw-bold d-flex justify-content-center align-items-center"
+            [style.background]="getAvatarGradient(task.assignee)">
             {{ task.assignee.charAt(0) | uppercase }}
           </div>
-          {{ task.assignee }}
+          <span class="assignee-name text-slate-700 fw-medium">{{ task.assignee }}</span>
         </div>
 
-        <div style="width: 50px;" class="text-end text-muted">
-          <span class="notion-dots">•••</span>
+        <!-- Delete Icon -->
+        <div style="width: 50px;" class="text-end">
+          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle" (click)="onDeleteTask(task.id)">
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
       </div>
       } @empty {
-      <div class="text-muted small py-4 text-center">No hay tareas creadas.</div>
+      <!-- Empty State Tasks -->
+      <div
+        class="d-flex flex-column justify-content-center align-items-center py-5 gap-3 bg-white rounded-3 border border-light-subtle shadow-sm">
+        <div class="fs-1 text-muted"><i class="bi bi-journal-x"></i></div>
+        <div class="text-center">
+          <h6 class="m-0 fw-bold text-slate-700">No hay tareas creadas</h6>
+          <p class="text-muted small m-0">Comienza añadiendo una tarea con el botón de arriba.</p>
+        </div>
+      </div>
       }
     </div>
     }
+    }
 
   </div>
+</div>

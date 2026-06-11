@@ -1,7 +1,124 @@
-/* Puedes agregar estilos específicos para el componente aquí si es necesario */
-/* Por ejemplo, para ajustar el ancho máximo del formulario o espaciados */
+/* --- MINIMALIST FORM STYLES --- */
+.minimal-card {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
 
-.card {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+.icon-bubble {
+  width: 56px;
+  height: 56px;
+  background-color: #f8fafc;
+  color: #64748b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.form-title {
+  font-weight: 700;
+  color: #334155;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.form-subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.form-group-minimal {
+  position: relative;
+}
+
+.form-label-minimal {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+
+.minimal-input {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: #334155;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.minimal-input:focus {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 0 0 4px rgba(203, 213, 225, 0.3);
+  outline: none;
+}
+
+.minimal-input::placeholder {
+  color: #cbd5e1;
+}
+
+.minimal-input.is-invalid {
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+}
+
+.minimal-input.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(252, 165, 165, 0.3);
+}
+
+.minimal-feedback {
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: 0.4rem;
+}
+
+/* --- BUTTONS --- */
+.btn-minimal-primary {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-minimal-primary:hover:not(:disabled) {
+  background-color: #e2e8f0;
+  color: #334155;
+}
+
+.btn-minimal-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --- ALERTS --- */
+.alert-minimal {
+  border-radius: 10px;
+  border: none;
+  font-size: 0.9rem;
+  padding: 0.75rem;
+}
+
+.alert-minimal.alert-info {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+.alert-minimal.alert-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.alert-minimal.alert-success {
+  background-color: #f0fdf4;
+  color: #166534;
 }

@@ -1,85 +1,130 @@
-<div class="container mt-4">
-  <h2>Create New Task</h2>
+<div class="container mt-5 mb-5 animate-slide-up">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-  <div *ngIf="successMessage" class="alert alert-success" role="alert">
-    {{ successMessage }}
-  </div>
+      <!-- Back button -->
+      <button class="btn btn-link text-muted p-0 mb-3 text-decoration-none d-flex align-items-center gap-2" routerLink="/home">
+        <i class="bi bi-arrow-left"></i>
+        <span>Volver al Tablero</span>
+      </button>
 
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    {{ errorMessage }}
-  </div>
+      <div class="minimal-card p-4 p-md-5">
+        <div class="mb-4 text-center">
+          <div class="icon-bubble mb-3 mx-auto">
+            <i class="bi bi-ui-checks"></i>
+          </div>
+          <h2 class="form-title">Nueva Tarea</h2>
+          <p class="form-subtitle">Agrega una tarea y asígnala a un proyecto existente.</p>
+        </div>
 
-<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-  <div class="mb-3">
-    <label for="projectId" class="form-label">Proyecto</label>
-    <select id="projectId" class="form-select" formControlName="projectId" [ngClass]="{'is-invalid': f['projectId'].touched && f['projectId'].invalid}">
-      <option value="" disabled selected>Seleccione un proyecto</option>
-      <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
-    </select>
-    <div *ngIf="f['projectId'].touched && f['projectId'].invalid" class="invalid-feedback">
-      El proyecto es obligatorio.
-    </div>
-  </div>
-    <div class="mb-3">
-      <label for="title" class="form-label">Title</label>
-      <input
-        type="text"
-        class="form-control"
-        id="title"
-        formControlName="title"
-        [class.is-invalid]="f['title'].invalid && (f['title'].dirty || f['title'].touched)"
-      />
-      <div *ngIf="f['title'].invalid && (f['title'].dirty || f['title'].touched)" class="invalid-feedback">
-        <div *ngIf="f['title'].errors?.['required']">(Title is required.)</div>
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" novalidate>
+          
+          <!-- Project -->
+          <div class="mb-4 form-group-minimal">
+            <label for="projectId" class="form-label-minimal">Proyecto</label>
+            <select
+              id="projectId"
+              class="form-select minimal-input"
+              formControlName="projectId"
+              [class.is-invalid]="f['projectId'].touched && f['projectId'].invalid"
+            >
+              <option value="" disabled selected>Seleccione un proyecto</option>
+              <option *ngFor="let project of projects" [value]="project.id">{{ project.name }}</option>
+            </select>
+            <div *ngIf="f['projectId'].touched && f['projectId'].invalid" class="invalid-feedback minimal-feedback">
+              El proyecto es obligatorio.
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="mb-4 form-group-minimal">
+            <label for="title" class="form-label-minimal">Título de la Tarea</label>
+            <input
+              type="text"
+              class="form-control minimal-input"
+              id="title"
+              formControlName="title"
+              placeholder="Ej. Revisar diseño en Figma"
+              [class.is-invalid]="f['title'].invalid && (f['title'].dirty || f['title'].touched)"
+            />
+            <div *ngIf="f['title'].invalid && (f['title'].dirty || f['title'].touched)" class="invalid-feedback minimal-feedback">
+              <div *ngIf="f['title'].errors?.['required']">El título es obligatorio.</div>
+            </div>
+          </div>
+
+          <!-- Estimate Hours & Status -->
+          <div class="row mb-4">
+            <div class="col-sm-6 form-group-minimal mb-4 mb-sm-0">
+              <label for="estimateHours" class="form-label-minimal">Horas Estimadas</label>
+              <input
+                type="number"
+                class="form-control minimal-input"
+                id="estimateHours"
+                formControlName="estimateHours"
+                placeholder="0"
+                [class.is-invalid]="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)"
+              />
+              <div *ngIf="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)" class="invalid-feedback minimal-feedback">
+                <div *ngIf="f['estimateHours'].errors?.['required']">Requerido.</div>
+                <div *ngIf="f['estimateHours'].errors?.['min']">Mínimo 1.</div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 form-group-minimal">
+              <label for="status" class="form-label-minimal">Estado Inicial</label>
+              <select
+                class="form-select minimal-input"
+                id="status"
+                formControlName="status"
+                [class.is-invalid]="f['status'].invalid && (f['status'].dirty || f['status'].touched)"
+              >
+                <option [ngValue]="null" disabled>Selecciona estado</option>
+                <option value="TODO">Por hacer</option>
+                <option value="IN_PROGRESS">En progreso</option>
+                <option value="DONE">Terminado</option>
+              </select>
+              <div *ngIf="f['status'].invalid && (f['status'].dirty || f['status'].touched)" class="invalid-feedback minimal-feedback">
+                <div *ngIf="f['status'].errors?.['required']">Requerido.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Assignee -->
+          <div class="mb-4 form-group-minimal">
+            <label for="assignee" class="form-label-minimal">Asignado a <span class="text-muted fw-normal">(Opcional)</span></label>
+            <input
+              type="text"
+              class="form-control minimal-input"
+              id="assignee"
+              formControlName="assignee"
+              placeholder="Nombre del responsable"
+            />
+          </div>
+
+          <!-- Loading / Error / Success Messages -->
+          <div *ngIf="loading" class="alert alert-minimal alert-info text-center" role="alert">
+            Creando tarea...
+          </div>
+          <div *ngIf="errorMessage" class="alert alert-minimal alert-danger text-center" role="alert">
+            {{ errorMessage }}
+          </div>
+          <div *ngIf="successMessage" class="alert alert-minimal alert-success text-center" role="alert">
+            {{ successMessage }}
+          </div>
+
+          <!-- Form Actions -->
+          <div class="d-grid mt-5">
+            <button
+              type="submit"
+              class="btn btn-minimal-primary py-2.5"
+              [disabled]="taskForm.invalid || loading"
+            >
+              <span *ngIf="!loading">Crear Tarea</span>
+              <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
-
-    <div class="mb-3">
-      <label for="estimateHours" class="form-label">Estimate Hours</label>
-      <input
-        type="number"
-        class="form-control"
-        id="estimateHours"
-        formControlName="estimateHours"
-        [class.is-invalid]="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)"
-      />
-      <div *ngIf="f['estimateHours'].invalid && (f['estimateHours'].dirty || f['estimateHours'].touched)" class="invalid-feedback">
-        <div *ngIf="f['estimateHours'].errors?.['required']">(Estimate Hours is required.)</div>
-        <div *ngIf="f['estimateHours'].errors?.['min']">(Estimate Hours must be at least 1.)</div>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="assignee" class="form-label">Assignee</label>
-      <input
-        type="text"
-        class="form-control"
-        id="assignee"
-        formControlName="assignee"
-      />
-    </div>
-
-    <div class="mb-3">
-      <label for="status" class="form-label">Status</label>
-      <select
-        class="form-select"
-        id="status"
-        formControlName="status"
-        [class.is-invalid]="f['status'].invalid && (f['status'].dirty || f['status'].touched)"
-      >
-        <option [ngValue]="null" disabled>Select Status</option>
-        <option value="TODO">TODO</option>
-        <option value="IN_PROGRESS">IN_PROGRESS</option>
-        <option value="DONE">DONE</option>
-      </select>
-      <div *ngIf="f['status'].invalid && (f['status'].dirty || f['status'].touched)" class="invalid-feedback">
-        <div *ngIf="f['status'].errors?.['required']">(Status is required.)</div>
-      </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary" [disabled]="taskForm.invalid || loading">
-      <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Create Task
-    </button>
-  </form>
+  </div>
 </div>

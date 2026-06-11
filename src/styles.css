@@ -2,6 +2,86 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
 /* Global styles */
-body {
-  background-color: #f8f9fa;
+:root {
+  --font-primary: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --bg-app: #f4f6f9;
+  
+  /* Palette */
+  --slate-900: #0b0f19;
+  --slate-800: #111827;
+  --slate-700: #1f2937;
+  --slate-600: #374151;
+  --slate-500: #6b7280;
+  
+  --indigo-gradient: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  --indigo-primary: #4f46e5;
+  --indigo-hover: #4338ca;
+  --indigo-light: #e0e7ff;
+  
+  --emerald-primary: #10b981;
+  --emerald-light: #d1fae5;
+  
+  --amber-primary: #f59e0b;
+  --amber-light: #fef3c7;
+  
+  --rose-primary: #ef4444;
+  --rose-light: #fee2e2;
+  
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-app);
+  color: var(--slate-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

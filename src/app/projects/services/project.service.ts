@@ -24,6 +24,18 @@ export class ProjectService {
     );
   }
 
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/projects/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateProject(id: number, project: Partial<Project>): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/projects/${id}`, project).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     return throwError(() => error);
   }

@@ -28,7 +28,7 @@ El usuario interactuará con un diseño tipo "Admin Dashboard" (Shell Layout) qu
 * **Dado** que el usuario ingresa a `/home`, **cuando** se inicializa el componente, **entonces** el sistema hace un GET a `/tasks` y dibuja las tarjetas/filas de la tabla con la información correspondiente.
 
 ## PROMPTS UTILIZADOS
-Soy un desarrollador senior frontEnd con experiencia en Angular+17 y TypeScript, y con experiencia en aplicaciones web empresariales.
+Soy un desarrollador senior frontEnd con experiencia en Angular+17 y TypeScript, y con experiencia en aplicaciones web eqmpresariales.
 Contexto: Estoy desarrollando el frontend de una aplicación de gestión de Tareas y Proyectos. El backend es una API REST en Java (Spring Boot). Actualmente estoy trabajando en la feature "Layout Principal y Dashboard". La regla principal es que no puedo modificar los formularios existentes, debo crear un "Shell" que los envuelva.
 
 Restricciones técnicas:
