@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Project, ProjectCreateRequest } from '../models/project.model';
-import { environment } from '../../environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,18 @@ export class ProjectService {
 
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.apiUrl}/projects`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  deleteProject(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/projects/${id}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  updateProject(id: number, project: Partial<Project>): Observable<Project> {
+    return this.http.put<Project>(`${this.apiUrl}/projects/${id}`, project).pipe(
       catchError(this.handleError)
     );
   }
