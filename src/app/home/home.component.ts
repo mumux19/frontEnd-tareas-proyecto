@@ -35,7 +35,8 @@ export class HomeComponent implements OnInit {
   projects = signal<Project[]>([]);
 
   loading = signal<boolean>(true);
-  error = signal<string | null>(null);
+  error = signal<string | null>(null); //este es para errores criticos
+  actionMessage = signal<{ text: string, type: 'error' | 'success' } | null>(null); // este es para errores y mandar un mensaje 
   activeTab = signal<'projects' | 'tasks'>('projects');
 
   // Indicador de modo offline / demo
@@ -165,8 +166,11 @@ export class HomeComponent implements OnInit {
 
   onDeleteProject(id: number | null): void {
     if (id === null) return;
+
+    const confirmacion = confirm('¿Estás seguro de que querés eliminar este proyecto?');
+    if (!confirmacion) return;
+
     if (this.isDemoMode()) {
-      // Borrar localmente en modo demo
       this.projects.update(projects => projects.filter(p => p.id !== id));
       return;
     }
@@ -174,13 +178,23 @@ export class HomeComponent implements OnInit {
     this.projectService.deleteProject(id).subscribe({
       next: () => {
         this.projects.update(projects => projects.filter(p => p.id !== id));
+        // Mostramos éxito
+        this.actionMessage.set({ text: 'Proyecto eliminado con éxito.', type: 'success' });
+        setTimeout(() => this.actionMessage.set(null), 3000); // Se borra a los 3 seg
       },
       error: (err) => {
         console.error('Error al borrar el proyecto', err);
+
+        if (err.status === 409) {
+          this.actionMessage.set({ text: 'No se puede eliminar el proyecto porque aún tiene tareas asignadas.', type: 'error' });
+        } else {
+          this.actionMessage.set({ text: 'No se pudo conectar al servidor para eliminar el proyecto.', type: 'error' });
+        }
+        // Se borra solo después de 5 segundos
+        setTimeout(() => this.actionMessage.set(null), 5000);
       }
     });
   }
-
   onDeleteTask(id: number): void {
     if (this.isDemoMode()) {
       // Borrar localmente en modo demo
