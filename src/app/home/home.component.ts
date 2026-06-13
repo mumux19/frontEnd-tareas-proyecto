@@ -7,7 +7,6 @@ import { ProjectService } from '../projects/services/project.service';
 import { Project } from '../projects/models/project.model';
 import { forkJoin } from 'rxjs';
 
-// Mock data para resiliencia frontend si el backend no responde
 const MOCK_PROJECTS: Project[] = [
   { id: 1, name: 'Rediseño de Portal UX', startDate: '2026-06-01', endDate: '2026-06-30', status: 'ACTIVE', description: 'Renovar la interfaz de usuario del portal corporativo.' },
   { id: 2, name: 'API Spring Boot Integrada', startDate: '2026-05-15', endDate: '2026-07-15', status: 'ACTIVE', description: 'Desarrollar y conectar el core del backend con el frontend.' },
@@ -35,9 +34,11 @@ export class HomeComponent implements OnInit {
   projects = signal<Project[]>([]);
 
   loading = signal<boolean>(true);
-  error = signal<string | null>(null); //este es para errores criticos
-  actionMessage = signal<{ text: string, type: 'error' | 'success' } | null>(null); // este es para errores y mandar un mensaje 
+  error = signal<string | null>(null);
+  actionMessage = signal<{ text: string, type: 'error' | 'success' } | null>(null);
   activeTab = signal<'projects' | 'tasks'>('projects');
+
+  private messageTimeoutId: any;
 
   // Indicador de modo offline / demo
   isDemoMode = signal<boolean>(false);
@@ -178,9 +179,7 @@ export class HomeComponent implements OnInit {
     this.projectService.deleteProject(id).subscribe({
       next: () => {
         this.projects.update(projects => projects.filter(p => p.id !== id));
-        // Mostramos éxito
-        this.actionMessage.set({ text: 'Proyecto eliminado con éxito.', type: 'success' });
-        setTimeout(() => this.actionMessage.set(null), 3000); // Se borra a los 3 seg
+        this.showTemporaryMessage("Proyecto eliminado con éxito.", "success", 3000);
       },
       error: (err) => {
         console.error('Error al borrar el proyecto', err);
@@ -197,7 +196,7 @@ export class HomeComponent implements OnInit {
   }
   onDeleteTask(id: number): void {
     if (this.isDemoMode()) {
-      // Borrar localmente en modo demo
+
       this.tasks.update(tasks => tasks.filter(t => t.id !== id));
       return;
     }
@@ -318,4 +317,19 @@ export class HomeComponent implements OnInit {
       }
     });
   }
+
+  private showTemporaryMessage(text: string, type: 'error' | 'success', duration: number): void {
+    if (this.messageTimeoutId) {
+      clearTimeout(this.messageTimeoutId);
+    }
+
+    this.actionMessage.set({ text, type });
+
+    this.messageTimeoutId = setTimeout(() => {
+      this.actionMessage.set(null);
+      this.messageTimeoutId = null;
+    }, duration);
+  }
+
+
 }
