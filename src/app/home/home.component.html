@@ -117,6 +117,21 @@
       </li>
     </ul>
 
+    @if (actionMessage()) {
+    <div class="alert alert-dismissible fade show shadow-sm border-0 mb-4 rounded-3 d-flex align-items-center"
+      [ngClass]="actionMessage()?.type === 'error' ? 'alert-danger text-danger' : 'alert-success text-success'"
+      role="alert">
+      <i class="bi fs-4 me-3"
+        [ngClass]="actionMessage()?.type === 'error' ? 'bi-exclamation-triangle-fill' : 'bi-check-circle-fill'"></i>
+      <div>
+        <h6 class="alert-heading mb-1 fw-bold">{{ actionMessage()?.type === 'error' ? 'No se pudo completar la acción' :
+          'Acción exitosa' }}</h6>
+        <p class="mb-0 small">{{ actionMessage()?.text }}</p>
+      </div>
+      <button type="button" class="btn-close ms-auto" (click)="actionMessage.set(null)" aria-label="Close"></button>
+    </div>
+    }
+
     <!-- Action Button depending on current tab -->
     @if (activeTab() === 'projects') {
     <button
@@ -180,16 +195,17 @@
 
         <!-- Status Badge Dropdown -->
         <div style="width: 140px; position: relative;">
-          <select 
-            class="badge rounded-pill fw-medium status-badge-pill border-0" 
-            [ngClass]="getNotionBadge(project.status)" 
+          <select class="badge rounded-pill fw-medium status-badge-pill border-0"
+            [ngClass]="getNotionBadge(project.status)"
             style="appearance: none; padding-right: 1.8rem; cursor: pointer; width: 100%; outline: none;"
             (change)="onUpdateProjectStatus(project, $event)">
             <option value="PLANNED" [selected]="project.status === 'PLANNED'">Planificado</option>
             <option value="ACTIVE" [selected]="project.status === 'ACTIVE'">Activo</option>
             <option value="CLOSED" [selected]="project.status === 'CLOSED'">Cerrado</option>
           </select>
-          <i class="bi bi-chevron-down position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;" [ngClass]="getNotionBadge(project.status)"></i>
+          <i class="bi bi-chevron-down position-absolute"
+            style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;"
+            [ngClass]="getNotionBadge(project.status)"></i>
         </div>
 
         <!-- Project Title -->
@@ -206,7 +222,8 @@
 
         <!-- Delete Icon -->
         <div style="width: 50px;" class="text-end">
-          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle" (click)="onDeleteProject(project.id)">
+          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle"
+            (click)="onDeleteProject(project.id)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
@@ -248,22 +265,24 @@
 
         <!-- Status Badge Dropdown -->
         <div style="width: 140px; position: relative;">
-          <select 
-            class="badge rounded-pill fw-medium status-badge-pill border-0" 
-            [ngClass]="getNotionBadge(task.status)" 
+          <select class="badge rounded-pill fw-medium status-badge-pill border-0"
+            [ngClass]="getNotionBadge(task.status)"
             style="appearance: none; padding-right: 1.8rem; cursor: pointer; width: 100%; outline: none;"
             (change)="onUpdateTaskStatus(task, $event)">
             <option value="TODO" [selected]="task.status === 'TODO'">Por hacer</option>
             <option value="IN_PROGRESS" [selected]="task.status === 'IN_PROGRESS'">En progreso</option>
             <option value="DONE" [selected]="task.status === 'DONE'">Terminado</option>
           </select>
-          <i class="bi bi-chevron-down position-absolute" style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;" [ngClass]="getNotionBadge(task.status)"></i>
+          <i class="bi bi-chevron-down position-absolute"
+            style="right: 12px; top: 50%; transform: translateY(-50%); font-size: 0.65rem; pointer-events: none; opacity: 0.7;"
+            [ngClass]="getNotionBadge(task.status)"></i>
         </div>
 
         <!-- Task Checkbox & Title -->
         <div class="flex-grow-1 fw-bold text-slate-800 d-flex align-items-center">
           <div class="checkbox-wrapper me-3">
-            <input class="form-check-input custom-checkbox" type="checkbox" [checked]="task.status === 'DONE'" (change)="onToggleTaskCheckbox(task, $event)">
+            <input class="form-check-input custom-checkbox" type="checkbox" [checked]="task.status === 'DONE'"
+              (change)="onToggleTaskCheckbox(task, $event)">
           </div>
           <span class="task-title-text" [class.text-decoration-line-through]="task.status === 'DONE'"
             [class.text-muted]="task.status === 'DONE'">
@@ -297,7 +316,8 @@
 
         <!-- Delete Icon -->
         <div style="width: 50px;" class="text-end">
-          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle" (click)="onDeleteTask(task.id)">
+          <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle"
+            (click)="onDeleteTask(task.id)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
