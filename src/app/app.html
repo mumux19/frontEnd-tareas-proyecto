@@ -1,0 +1,77 @@
+<div class="d-flex vh-100 overflow-hidden">
+  <!-- Sidebar -->
+  <nav class="sidebar-container p-3 d-flex flex-column text-white">
+    <!-- Branding Header -->
+    <div class="brand-header d-flex align-items-center gap-2 mb-4 px-2">
+      <div class="brand-logo-glow">
+        <i class="bi bi-rocket-takeoff-fill"></i>
+      </div>
+      <span class="brand-title">PlanFlow</span>
+    </div>
+
+    <!-- Navigation List -->
+    <ul class="nav nav-pills flex-column gap-1 mb-auto">
+      <li class="nav-item">
+        <a routerLink="/home" routerLinkActive="active-nav" class="nav-link sidebar-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-white-50" aria-current="page">
+          <i class="bi bi-grid-1x2"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/projects/crear" routerLinkActive="active-nav" class="nav-link sidebar-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-white-50">
+          <i class="bi bi-folder2-open"></i>
+          <span>Nuevo Proyecto</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/nueva-tarea" routerLinkActive="active-nav" class="nav-link sidebar-link d-flex align-items-center gap-3 px-3 py-2 rounded-3 text-white-50">
+          <i class="bi bi-plus-circle"></i>
+          <span>Nueva Tarea</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Footer Profile Info -->
+    <div class="profile-drawer mt-auto d-flex align-items-center gap-3 p-3 rounded-3">
+      <div class="profile-avatar-wrapper">
+        <div class="profile-avatar bg-indigo text-white fw-bold">
+          UX
+        </div>
+        <span class="online-indicator"></span>
+      </div>
+      <div class="profile-meta text-truncate">
+        <span class="d-block fw-semibold text-white text-truncate" style="font-size: 0.85rem;">Developer Workspace</span>
+        <span class="d-block text-white-50 text-truncate" style="font-size: 0.75rem;">Rol: UX / UI</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <div class="d-flex flex-column flex-grow-1 overflow-hidden">
+    <!-- Topbar (Glassmorphic) -->
+    <header class="topbar-glass border-bottom p-3 d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small d-md-inline-block">
+          <i class="bi bi-house-door-fill text-secondary me-1"></i>
+          Inicio / Panel
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Date display -->
+        <span class="text-muted small d-none d-md-inline-block fw-medium">
+          <i class="bi bi-calendar3 text-primary me-2"></i> {{ currentDate }}
+        </span>
+        <!-- User Badge -->
+        <div class="badge-glass d-flex align-items-center gap-2 px-3 py-1.5 rounded-pill">
+          <span class="pulse-indicator"></span>
+          <span class="text-primary fw-semibold small">Online Workspace</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="flex-grow-1 p-4 overflow-auto bg-light animate-fade-in">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+<div class="container mt-5 mb-5 animate-slide-up">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      
+      <!-- Back button -->
+      <button class="btn btn-link text-muted p-0 mb-3 text-decoration-none d-flex align-items-center gap-2" (click)="onCancel()">
+        <i class="bi bi-arrow-left"></i>
+        <span>Volver a Proyectos</span>
+      </button>
+
+      <div class="minimal-card p-4 p-md-5">
+        <div class="mb-4 text-center">
+          <div class="icon-bubble mb-3 mx-auto">
+            <i class="bi bi-folder-plus"></i>
+          </div>
+          <h2 class="form-title">Crear Nuevo Proyecto</h2>
+          <p class="form-subtitle">Completa los detalles para inicializar un nuevo espacio de trabajo.</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          
+          <!-- Name -->
+          <div class="mb-4 form-group-minimal">
+            <label for="name" class="form-label-minimal">Nombre del Proyecto</label>
+            <input
+              type="text"
+              class="form-control minimal-input"
+              [class.is-invalid]="isInvalid(nameCtrl)"
+              id="name"
+              formControlName="name"
+              placeholder="Ej. Rediseño de Interfaz"
+            >
+            <div *ngIf="isInvalid(nameCtrl)" class="invalid-feedback minimal-feedback">
+              <div *ngIf="nameCtrl.errors?.['required']">El nombre es obligatorio.</div>
+              <div *ngIf="nameCtrl.errors?.['maxlength']">El nombre no puede exceder los 100 caracteres.</div>
+            </div>
+          </div>
+
+          <!-- Dates Row -->
+          <div class="row mb-4">
+            <!-- Start Date -->
+            <div class="col-sm-6 form-group-minimal mb-4 mb-sm-0">
+              <label for="startDate" class="form-label-minimal">Fecha de Inicio</label>
+              <input
+                type="date"
+                class="form-control minimal-input"
+                [class.is-invalid]="isInvalid(startDateCtrl)"
+                id="startDate"
+                formControlName="startDate"
+              >
+              <div *ngIf="isInvalid(startDateCtrl)" class="invalid-feedback minimal-feedback">
+                <div *ngIf="startDateCtrl.errors?.['required']">La fecha de inicio es requerida.</div>
+              </div>
+            </div>
+
+            <!-- End Date -->
+            <div class="col-sm-6 form-group-minimal">
+              <label for="endDate" class="form-label-minimal">Fecha de Fin</label>
+              <input
+                type="date"
+                class="form-control minimal-input"
+                [class.is-invalid]="isInvalid(endDateCtrl) || hasEndBeforeStartError"
+                id="endDate"
+                formControlName="endDate"
+              >
+              <div *ngIf="isInvalid(endDateCtrl) || hasEndBeforeStartError" class="invalid-feedback minimal-feedback">
+                <div *ngIf="endDateCtrl.errors?.['required']">La fecha de fin es requerida.</div>
+                <div *ngIf="endDateCtrl.errors?.['endDateInPast']">No puede ser anterior a hoy.</div>
+                <div *ngIf="hasEndBeforeStartError">Debe ser igual o posterior al inicio.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="mb-4 form-group-minimal">
+            <label for="status" class="form-label-minimal">Estado Inicial</label>
+            <select
+              class="form-select minimal-input"
+              [class.is-invalid]="isInvalid(statusCtrl)"
+              id="status"
+              formControlName="status"
+            >
+              <option value="" disabled selected>Selecciona una opción</option>
+              <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+            </select>
+            <div *ngIf="isInvalid(statusCtrl)" class="invalid-feedback minimal-feedback">
+              <div *ngIf="statusCtrl.errors?.['required']">El estado es obligatorio.</div>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="mb-4 form-group-minimal">
+            <label for="description" class="form-label-minimal">Descripción <span class="text-muted fw-normal">(Opcional)</span></label>
+            <textarea
+              class="form-control minimal-input"
+              [class.is-invalid]="isInvalid(descriptionCtrl)"
+              id="description"
+              formControlName="description"
+              rows="3"
+              placeholder="Detalles sobre el propósito del proyecto..."
+            ></textarea>
+            <div *ngIf="isInvalid(descriptionCtrl)" class="invalid-feedback minimal-feedback">
+              <div *ngIf="descriptionCtrl.errors?.['maxlength']">La descripción no puede exceder los 500 caracteres.</div>
+            </div>
+          </div>
+
+          <!-- Loading / Error / Success Messages -->
+          <div *ngIf="isSaving()" class="alert alert-minimal alert-info text-center" role="alert">
+            Guardando proyecto...
+          </div>
+          <div *ngIf="errorMessage()" class="alert alert-minimal alert-danger text-center" role="alert">
+            {{ errorMessage() }}
+          </div>
+          <div *ngIf="successMessage()" class="alert alert-minimal alert-success text-center" role="alert">
+            {{ successMessage() }}
+          </div>
+
+          <!-- Form Actions -->
+          <div class="d-grid mt-5">
+            <button
+              type="submit"
+              class="btn btn-minimal-primary py-2.5"
+              [disabled]="form.invalid || isSaving()"
+            >
+              <span *ngIf="!isSaving()">Crear Proyecto</span>
+              <span *ngIf="isSaving()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
