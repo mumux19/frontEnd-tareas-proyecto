@@ -194,61 +194,44 @@ export class HomeComponent implements OnInit {
       }
     });
   }
-  onDeleteTask(id: number): void {
-    if (this.isDemoMode()) {
+  onDeleteTask(task: any): void {
+    // 1. Imprimimos la tarea para ver su estructura real en la consola
+    console.log('🔍 ANALIZANDO TAREA A BORRAR:', task);
 
-      this.tasks.update(tasks => tasks.filter(t => t.id !== id));
+    // 2. Buscamos los IDs en todas las formas posibles que manda Spring Boot
+    const taskId = task.id || task.taskId || task.idTarea;
+    const projectId = task.projectId || task.project?.id || null;
+
+    // 3. Escudo de seguridad
+    if (!taskId || !projectId) {
+      console.error('❌ NO SE PUEDE BORRAR. Faltan IDs.', { taskId, projectId });
+      this.showTemporaryMessage('Error interno: Faltan datos en la tarea', 'error', 5000);
       return;
     }
 
-    this.taskService.deleteTask(id).subscribe({
+    const confirmacion = confirm('¿Estás seguro de que querés eliminar esta tarea?');
+    if (!confirmacion) return;
+
+    if (this.isDemoMode()) {
+      // Usamos "t !== task" para borrar la referencia exacta sin depender del ID
+      this.tasks.update(tareas => tareas.filter(t => t !== task));
+      this.showTemporaryMessage('Tarea eliminada con éxito.', 'success', 3000);
+      return;
+    }
+
+    // 4. Llamada al backend con los IDs correctos
+    this.taskService.deleteTask(projectId, taskId).subscribe({
       next: () => {
-        this.tasks.update(tasks => tasks.filter(t => t.id !== id));
+        // Actualizamos la tabla filtrando el objeto exacto
+        this.tasks.update(tareas => tareas.filter(t => t !== task));
+        this.showTemporaryMessage('Tarea eliminada con éxito.', 'success', 3000);
       },
       error: (err) => {
         console.error('Error al borrar la tarea', err);
+        this.showTemporaryMessage('No se pudo eliminar la tarea. Intentá de nuevo.', 'error', 5000);
       }
     });
   }
-
-  onUpdateTaskStatus(task: TaskResponse, event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const newStatus = target.value as 'TODO' | 'IN_PROGRESS' | 'DONE';
-
-    // Optimistic UI update
-    const previousStatus = task.status;
-    this.tasks.update(tasks =>
-      tasks.map(t => t.id === task.id ? { ...t, status: newStatus } : t)
-    );
-
-    if (this.isDemoMode()) return;
-
-    // Call Backend
-    const updateRequest: TaskRequest = {
-      title: task.title,
-      estimateHours: task.estimateHours,
-      assignee: task.assignee,
-      status: newStatus,
-      project: { id: task.project.id }
-    };
-
-    this.taskService.updateTask(task.id, updateRequest).subscribe({
-      next: () => {
-        // Success, nothing to do since UI is already updated
-      },
-      error: (err) => {
-        console.warn('Backend update failed. If PUT /tasks/{id} is not implemented, this is expected.', err);
-        if (err.status === 404 || err.status === 405) return; // Keep local state to allow testing the UI
-
-        // Revert UI update on unexpected error
-        this.tasks.update(tasks =>
-          tasks.map(t => t.id === task.id ? { ...t, status: previousStatus } : t)
-        );
-        target.value = previousStatus;
-      }
-    });
-  }
-
   onToggleTaskCheckbox(task: TaskResponse, event: Event): void {
     const target = event.target as HTMLInputElement;
     const isChecked = target.checked;
@@ -279,6 +262,40 @@ export class HomeComponent implements OnInit {
           tasks.map(t => t.id === task.id ? { ...t, status: previousStatus } : t)
         );
         target.checked = !isChecked;
+      }
+    });
+  }
+
+  onUpdateTaskStatus(task: TaskResponse, event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const newStatus = target.value as 'TODO' | 'IN_PROGRESS' | 'DONE';
+    const previousStatus = task.status;
+
+    // Optimistic update
+    this.tasks.update(tasks =>
+      tasks.map(t => t.id === task.id ? { ...t, status: newStatus } : t)
+    );
+
+    if (this.isDemoMode()) return;
+
+    const updateRequest: TaskRequest = {
+      title: task.title,
+      estimateHours: task.estimateHours,
+      assignee: task.assignee,
+      status: newStatus,
+      project: { id: task.project.id }
+    };
+
+    this.taskService.updateTask(task.id, updateRequest).subscribe({
+      next: () => { },
+      error: (err) => {
+        console.warn('Backend update failed. If PUT /tasks/{id} is not implemented, this is expected.', err);
+        if (err.status === 404 || err.status === 405) return;
+
+        this.tasks.update(tasks =>
+          tasks.map(t => t.id === task.id ? { ...t, status: previousStatus } : t)
+        );
+        target.value = previousStatus;
       }
     });
   }
