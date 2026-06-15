@@ -1,0 +1,47 @@
+# Feature: Borrar Tarea
+
+## Descripción general
+El usuario interactuará con el botón de acción (icono de papelera) de cada fila en la pestaña de "Tareas" del panel de control (`HomeComponent`). El sistema pedirá confirmación antes de proceder con el borrado. Tras comunicarse con el backend, el estado de la vista se actualizará reactivamente (sin recargar la página) y se utilizará el sistema centralizado de notificaciones no bloqueantes para informar el resultado.
+
+## Endpoints involucrados
+* **DELETE** `/tasks/{id}`
+* **Response:**
+  * `204 No Content` → Retorna éxito de la eliminación de la tarea.
+  * `404 Not Found / 500 Internal Server Error` → Fallos de conexión o inexistencia del recurso que deben ser capturados para evitar que la UI se bloquee.
+
+## Restricciones de negocio
+* Es obligatorio solicitar confirmación explícita del usuario mediante un cuadro de diálogo nativo (`confirm`) para evitar pérdidas de información por clics accidentales.
+* La tarea solo debe desaparecer de la vista si la respuesta del backend es estrictamente exitosa.
+* Cualquier mensaje de estado (éxito o error) debe convivir en armonía con la UI actual, mostrándose en el banner superior sin ocultar la tabla de tareas ni bloquear la navegación.
+
+## Lineamientos técnicos
+* **Componentes y Servicios:** Se extenderá el uso del componente `HomeComponent` y se llamará al método `deleteTask(id: number)` del `TaskService`.
+* **Estado (Signals):** Se utilizará el método `.update()` sobre la señal `tasks` para filtrar la lista y remover el objeto `TaskResponse` que coincida con el ID eliminado.
+* **Reutilización de Componentes:** Para el manejo visual, el método de borrado deberá consumir la función privada `showMessage(text, type, durationMs)` ya existente en el componente, garantizando consistencia en los tiempos (3s para éxito, 5s para error) y evitando condiciones de carrera en los temporizadores.
+
+## Criterios de aceptación
+* **Dado** que el usuario se encuentra en la pestaña "Tareas", 
+**cuando** hace clic en el icono de eliminar de una tarea, 
+**entonces** se despliega una alerta nativa preguntando "¿Estás seguro de que querés eliminar esta tarea?".
+* **Dado** que el cuadro de confirmación está abierto, 
+**cuando** el usuario hace clic en "Cancelar", 
+**entonces** la petición HTTP no se dispara y la acción se cancela silenciosamente.
+* **Dado** que el usuario hace clic en "Aceptar", 
+**cuando** el servidor responde exitosamente (`204`), 
+**entonces** la fila de la tarea desaparece reactivamente y se muestra un cartel verde indicando "Tarea eliminada con éxito".
+* **Dado** que se muestra el cartel verde de éxito, 
+**cuando** transcurren exactamente 3 segundos, 
+**entonces** el mensaje desaparece de la pantalla.
+* **Dado** que el usuario hace clic en "Aceptar", 
+**cuando** el servidor responde con un error de red o de servidor, 
+**entonces** la fila de la tarea permanece visible y se muestra un cartel rojo indicando "No se pudo eliminar la tarea. Intentá de nuevo".
+* **Dado** que se muestra el cartel rojo de error, 
+**cuando** transcurren exactamente 5 segundos, 
+**entonces** el mensaje desaparece de la pantalla.
+
+---
+
+## Prompts Utilizados
+
+**1. Generación de la funcionalidad:**
+> "Quiero implementar la funcionalidad de borrar tareas en mi `HomeComponent`. En la tabla de Tareas, cuando el usuario haga clic en el ícono de eliminar de una tarea específica, el sistema debe lanzar un `confirm()` nativo. Si el usuario acepta, se debe llamar al endpoint `DELETE /tasks/{id}` usando `TaskService`. Si la respuesta es exitosa (204), se debe remover la tarea de la interfaz usando el método `.update()` sobre la señal `tasks`, y mostrar un mensaje verde de éxito llamando a la función interna que ya existe: `this.showMessage('Tarea eliminada con éxito.', 'success', 3000)`. Si ocurre un error, no se altera la fila y se muestra un mensaje rojo llamando a: `this.showMessage('No se pudo eliminar la tarea. Intentá de nuevo.', 'error', 5000)'."

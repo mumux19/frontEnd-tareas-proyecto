@@ -14,7 +14,6 @@ export class TaskService {
   constructor(private http: HttpClient) { }
 
   createTask(task: TaskRequest): Observable<TaskResponse> {
-    // IMPORTANTE: Fijate si tu backend es /task o /tasks y cambialo acá si hace falta
     return this.http.post<TaskResponse>(`${this.apiUrl}/tasks`, task);
   }
 
@@ -22,8 +21,10 @@ export class TaskService {
     return this.http.get<TaskResponse[]>(`${this.apiUrl}/tasks`);
   }
 
-  deleteTask(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/tasks/${id}`);
+  deleteTask(projectId: number, taskId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/projects/${projectId}/tasks/${taskId}`, {
+      responseType: 'text'
+    });
   }
 
   updateTask(id: number, task: TaskRequest): Observable<TaskResponse> {

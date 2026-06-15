@@ -189,8 +189,7 @@
 
     <!-- Projects Rows List -->
     <div class="d-flex flex-column gap-2 mt-2">
-      @for (project of projects(); track project.id) {
-      <div
+      @for (project of projects(); track project.id || $index) { <div
         class="d-flex align-items-center bg-white border border-light-subtle py-3 px-3 rounded-3 shadow-sm list-row-card">
 
         <!-- Status Badge Dropdown -->
@@ -258,8 +257,7 @@
 
     <!-- Tasks Rows List -->
     <div class="d-flex flex-column gap-2 mt-2">
-      @for (task of tasks(); track task.id) {
-      <div
+      @for (task of tasks(); track task.id || $index) { <div
         class="d-flex align-items-center bg-white border border-light-subtle py-3 px-3 rounded-3 shadow-sm list-row-card"
         [class.completed-task-card]="task.status === 'DONE'">
 
@@ -317,7 +315,7 @@
         <!-- Delete Icon -->
         <div style="width: 50px;" class="text-end">
           <button class="btn btn-link text-muted p-1 hover-delete border-0 bg-transparent rounded-circle"
-            (click)="onDeleteTask(task.id)">
+            (click)="onDeleteTask(task)">
             <i class="bi bi-trash"></i>
           </button>
         </div>
